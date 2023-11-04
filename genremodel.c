@@ -6,6 +6,39 @@ typedef struct name{
     char a[60];
 }name;
 
+void addUserInGenreModel(int movie,int user,float *genre){
+    float sum[movie];
+    float temp;
+    FILE *fptr=fopen("movgen.txt","r");
+    for(int i=0;i<movie;i++){
+        sum[i]=0;
+        for(int j=0;j<21;j++){
+            fscanf(fptr,"%f",&temp);
+            temp=genre[j]*temp;
+            sum[i]+=temp;
+        }
+    }
+    fclose(fptr);
+    int max=0;
+    for(int i=0;i<movie;i++){
+        if(max<sum[i])   max=sum[i];
+    }
+    for(int i=0;i<movie;i++){
+        sum[i]=(sum[i]*10)/max;
+    }
+    fptr=fopen("newUser.txt","a");
+    for(int i=0;i<movie;i++){
+        fprintf(fptr,"%f ",sum[i]);
+    }
+    fprintf(fptr,"\n");
+    fclose(fptr);
+    user++;
+    fptr=fopen("number.txt","w");
+    fprintf(fptr,"%d\n%d\n",movie,user);
+    fclose(fptr);
+    return;
+}
+
 void genreModel(int movie,int user){
     char ch;  // random character
     char genreNames[200]="Action Adventure Animation Biography Comedy Crime Documentary Drama Family Fantasy History Horror Music Musical Mystery Romance Sci-Fi Short Sport Thriller War ";  // genre list
@@ -23,6 +56,7 @@ void genreModel(int movie,int user){
         printf(":");
         scanf("%f",&genre[i]);	
     }
+    addUserInGenreModel(movie,user,genre);
     float contentBased[movie];     // stores comtent based ratings of all movies
     name movieList[movie];      // to store movie names  
     FILE *fptr=fopen("names.txt","r");  // opening file having names of all movies
